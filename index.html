@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador INSS Geral - Agiliza Credi</title>
+  <style>
+    :root {
+      --azul: #1f4e79;
+      --azul2: #2b6aa3;
+      --laranja: #f58220;
+      --claro: #f8f4ee;
+      --texto: #333333;
+      --borda: #d9d9d9;
+      --branco: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--claro);
+      color: var(--texto);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--azul), var(--azul2));
+      color: white;
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .header h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .header p {
+      margin: 0;
+      font-size: 15px;
+      opacity: 0.95;
+    }
+
+    .card {
+      background: var(--branco);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+
+    .section-title {
+      margin: 0 0 16px;
+      font-size: 20px;
+      color: var(--azul);
+      border-left: 5px solid var(--laranja);
+      padding-left: 10px;
+    }
+
+    .grid-2, .grid-3, .grid-4 {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--borda);
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+      background: #fff;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--azul);
+      box-shadow: 0 0 0 3px rgba(31, 78, 121, 0.10);
+    }
+
+    .sub-card {
+      border: 1px solid #ececec;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      background: #fff;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      border: none;
+      padding: 14px 18px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--azul);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: var(--laranja);
+      color: white;
+    }
+
+    .btn-light {
+      background: #eef3f8;
+      color: var(--azul);
+    }
+
+    textarea {
+      min-height: 320px;
+      resize: vertical;
+      white-space: pre-wrap;
+    }
+
+    .linha-port, .linha-refin {
+      border: 1px dashed #d8d8d8;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #fcfcfc;
+    }
+
+    .total-box {
+      background: #fff7ef;
+      border: 1px solid #f2d2b1;
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 12px;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .small-note {
+      font-size: 12px;
+      color: #666;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 14px;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Agiliza Credi • Simulador INSS Geral</h1>
+      <p>Margem nova, cartões, portabilidade + refinanciamento e refinanciamento em uma única tela.</p>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Dados do cliente</h2>
+      <div class="grid-4">
+        <div>
+          <label for="cliente">Cliente</label>
+          <input type="text" id="cliente" placeholder="Nome do cliente">
+        </div>
+        <div>
+          <label for="cpf">CPF</label>
+          <input type="text" id="cpf" placeholder="000.000.000-00">
+        </div>
+        <div>
+          <label for="beneficio">Tipo de benefício</label>
+          <select id="beneficio">
+            <option>Aposentadoria</option>
+            <option>Pensão</option>
+            <option>BPC/LOAS</option>
+          </select>
+        </div>
+        <div>
+          <label for="primeiraParcela">Primeira parcela para</label>
+          <input type="text" id="primeiraParcela" placeholder="Ex: Maio/2026">
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Margem Nova</h2>
+      <div class="sub-card">
+        <div class="grid-4">
+          <div>
+            <label for="novoBanco">Banco</label>
+            <input type="text" id="novoBanco" placeholder="Ex: Facta">
+          </div>
+          <div>
+            <label for="novoPrazo">Prazo</label>
+            <input type="text" id="novoPrazo" placeholder="Ex: 96X">
+          </div>
+          <div>
+            <label for="novoParcela">Parcela</label>
+            <input type="text" id="novoParcela" placeholder="Ex: 567,35">
+          </div>
+          <div>
+            <label for="novoCoef">Coeficiente</label>
+            <input type="text" id="novoCoef" placeholder="Ex: 0,023466">
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <label for="novoValor">Valor liberado</label>
+          <input type="text" id="novoValor" placeholder="Digite ou calcule automaticamente">
+        </div>
+
+        <div class="actions">
+          <button class="btn-light" type="button" onclick="calcularNovo()">Calcular valor liberado</button>
+          <button class="btn-light" type="button" onclick="calcularParcelaNovo()">Calcular parcela</button>
+        </div>
+
+        <div class="small-note">
+          Para calcular o valor liberado: preencha parcela + coeficiente. Para calcular a parcela: preencha valor liberado + coeficiente.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Cartão RMC</h2>
+      <div class="sub-card">
+        <div class="grid-4">
+          <div>
+            <label for="rmcBanco">Banco</label>
+            <input type="text" id="rmcBanco" placeholder="Ex: BMG">
+          </div>
+          <div>
+            <label for="rmcPrazo">Prazo</label>
+            <input type="text" id="rmcPrazo" placeholder="Ex: 96X">
+          </div>
+          <div>
+            <label for="rmcParcelaCheia">Parcela cheia</label>
+            <input type="text" id="rmcParcelaCheia" placeholder="Ex: 149,37">
+          </div>
+          <div>
+            <label for="rmcCoef">Coeficiente</label>
+            <input type="text" id="rmcCoef" placeholder="Ex: 0,03126">
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-light" type="button" onclick="calcularRMC()">Calcular Cartão RMC</button>
+        </div>
+        <div class="grid-2" style="margin-top:14px;">
+          <div>
+            <label for="rmcParcela70">Parcela considerada (70%)</label>
+            <input type="text" id="rmcParcela70" readonly placeholder="Calculado automaticamente">
+          </div>
+          <div>
+            <label for="rmcValor70">Valor liberado em conta (70%)</label>
+            <input type="text" id="rmcValor70" readonly placeholder="Calculado automaticamente">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Cartão Benefício</h2>
+      <div class="sub-card">
+        <div class="grid-4">
+          <div>
+            <label for="benefBanco">Banco</label>
+            <input type="text" id="benefBanco" placeholder="Ex: Facta">
+          </div>
+          <div>
+            <label for="benefPrazo">Prazo</label>
+            <input type="text" id="benefPrazo" placeholder="Ex: 96X">
+          </div>
+          <div>
+            <label for="benefParcelaCheia">Parcela cheia</label>
+            <input type="text" id="benefParcelaCheia" placeholder="Ex: 149,37">
+          </div>
+          <div>
+            <label for="benefCoef">Coeficiente</label>
+            <input type="text" id="benefCoef" placeholder="Ex: 0,03126">
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-light" type="button" onclick="calcularBeneficio()">Calcular Cartão Benefício</button>
+        </div>
+        <div class="grid-2" style="margin-top:14px;">
+          <div>
+            <label for="benefParcela70">Parcela considerada (70%)</label>
+            <input type="text" id="benefParcela70" readonly placeholder="Calculado automaticamente">
+          </div>
+          <div>
+            <label for="benefValor70">Valor liberado em conta (70%)</label>
+            <input type="text" id="benefValor70" readonly placeholder="Calculado automaticamente">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Portabilidade + Refinanciamento</h2>
+      <div id="portContainer"></div>
+      <button class="btn-light" type="button" onclick="adicionarPort()">+ Adicionar Portabilidade + Refinanciamento</button>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Refinanciamento</h2>
+      <div id="refinContainer"></div>
+      <button class="btn-light" type="button" onclick="adicionarRefin()">+ Adicionar Refinanciamento</button>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Totais</h2>
+      <div class="total-box">
+        <div><strong>Total liberado:</strong> <span id="totalLiberado">R$ 0,00</span></div>
+        <div><strong>Total de parcela:</strong> <span id="totalParcela">R$ 0,00</span></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" type="button" onclick="gerarMensagem()">Gerar Simulação</button>
+        <button class="btn-secondary" type="button" onclick="copiarMensagem()">Copiar para WhatsApp</button>
+        <button class="btn-primary" type="button" onclick="salvarSimulacao()">Salvar simulação</button>
+        <button class="btn-light" type="button" onclick="limparTudo()">Limpar tudo</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Mensagem pronta</h2>
+      <textarea id="resultado" placeholder="A mensagem pronta para o WhatsApp aparecerá aqui."></textarea>
+    </div>
+  </div>
+
+  <script>
+    let contadorPort = 0;
+    let contadorRefin = 0;
+
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzYd_lE6y1l-iZhaay_B_5csdCZAogHCtPQXNer4_8_ygZwHjj51ZYSuvCC0seZMzTd/exec";
+
+    function parseBr(valor) {
+      if (!valor) return 0;
+      valor = String(valor)
+        .trim()
+        .replace(/R\$\s?/g, '')
+        .replace(/\s/g, '')
+        .replace(/\./g, '')
+        .replace(',', '.');
+      const numero = parseFloat(valor);
+      return isNaN(numero) ? 0 : numero;
+    }
+
+    function formatBR(numero) {
+      return numero.toLocaleString('pt-BR', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function money(numero) {
+      return 'R$ ' + formatBR(numero);
+    }
+
+    function calcularNovo() {
+      const parcela = parseBr(document.getElementById('novoParcela').value);
+      const coef = parseBr(document.getElementById('novoCoef').value);
+      const valor = coef > 0 ? parcela / coef : 0;
+
+      document.getElementById('novoValor').value = valor > 0 ? money(valor) : '';
+      atualizarTotais();
+    }
+
+    function calcularParcelaNovo() {
+      const valorLiberado = parseBr(document.getElementById('novoValor').value);
+      const coef = parseBr(document.getElementById('novoCoef').value);
+      const parcela = coef > 0 ? valorLiberado * coef : 0;
+
+      document.getElementById('novoParcela').value = parcela > 0 ? formatBR(parcela) : '';
+      atualizarTotais();
+    }
+
+    function calcularRMC() {
+      const parcelaCheia = parseBr(document.getElementById('rmcParcelaCheia').value);
+      const coef = parseBr(document.getElementById('rmcCoef').value);
+
+      const valorTotal = coef > 0 ? parcelaCheia / coef : 0;
+      const parcela70 = parcelaCheia * 0.7;
+      const valor70 = valorTotal * 0.7;
+
+      document.getElementById('rmcParcela70').value = parcela70 > 0 ? money(parcela70) : '';
+      document.getElementById('rmcValor70').value = valor70 > 0 ? money(valor70) : '';
+
+      atualizarTotais();
+    }
+
+    function calcularBeneficio() {
+      const parcelaCheia = parseBr(document.getElementById('benefParcelaCheia').value);
+      const coef = parseBr(document.getElementById('benefCoef').value);
+
+      const valorTotal = coef > 0 ? parcelaCheia / coef : 0;
+      const parcela70 = parcelaCheia * 0.7;
+      const valor70 = valorTotal * 0.7;
+
+      document.getElementById('benefParcela70').value = parcela70 > 0 ? money(parcela70) : '';
+      document.getElementById('benefValor70').value = valor70 > 0 ? money(valor70) : '';
+
+      atualizarTotais();
+    }
+
+    function adicionarPort() {
+      contadorPort++;
+
+      const div = document.createElement('div');
+      div.className = 'linha-port';
+      div.innerHTML = `
+        <div class="grid-3">
+          <div>
+            <label>Parcela atual</label>
+            <input type="text" class="portParcela" placeholder="Ex: 148,22" oninput="atualizarTotais()">
+          </div>
+          <div>
+            <label>Estende para</label>
+            <input type="text" class="portPrazo" placeholder="Ex: 84X" oninput="atualizarTotais()">
+          </div>
+          <div>
+            <label>Libera</label>
+            <input type="text" class="portLibera" placeholder="Ex: 2.350,00" oninput="atualizarTotais()">
+          </div>
+        </div>
+      `;
+
+      document.getElementById('portContainer').appendChild(div);
+      atualizarTotais();
+    }
+
+    function adicionarRefin() {
+      contadorRefin++;
+
+      const div = document.createElement('div');
+      div.className = 'linha-refin';
+      div.innerHTML = `
+        <div class="grid-3">
+          <div>
+            <label>Parcela atual</label>
+            <input type="text" class="refinParcela" placeholder="Ex: 122,50" oninput="atualizarTotais()">
+          </div>
+          <div>
+            <label>Estende para</label>
+            <input type="text" class="refinPrazo" placeholder="Ex: 96X" oninput="atualizarTotais()">
+          </div>
+          <div>
+            <label>Libera</label>
+            <input type="text" class="refinLibera" placeholder="Ex: 2.980,00" oninput="atualizarTotais()">
+          </div>
+        </div>
+      `;
+
+      document.getElementById('refinContainer').appendChild(div);
+      atualizarTotais();
+    }
+
+    function atualizarTotais() {
+      const novoParcela = parseBr(document.getElementById('novoParcela').value);
+      const novoValor = parseBr(document.getElementById('novoValor').value);
+
+      const rmcParcela = parseBr(document.getElementById('rmcParcela70').value);
+      const rmcValor = parseBr(document.getElementById('rmcValor70').value);
+
+      const benefParcela = parseBr(document.getElementById('benefParcela70').value);
+      const benefValor = parseBr(document.getElementById('benefValor70').value);
+
+      let totalLiberado = 0;
+      let totalParcela = 0;
+
+      if (novoValor > 0) totalLiberado += novoValor;
+      if (rmcValor > 0) totalLiberado += rmcValor;
+      if (benefValor > 0) totalLiberado += benefValor;
+
+      if (novoParcela > 0) totalParcela += novoParcela;
+      if (rmcParcela > 0) totalParcela += rmcParcela;
+      if (benefParcela > 0) totalParcela += benefParcela;
+
+      document.querySelectorAll('.portLibera').forEach(campo => {
+        const valor = parseBr(campo.value);
+        if (valor > 0) totalLiberado += valor;
+      });
+
+      document.querySelectorAll('.refinLibera').forEach(campo => {
+        const valor = parseBr(campo.value);
+        if (valor > 0) totalLiberado += valor;
+      });
+
+      document.getElementById('totalLiberado').textContent = money(totalLiberado);
+      document.getElementById('totalParcela').textContent = money(totalParcela);
+    }
+
+    function gerarMensagem() {
+      atualizarTotais();
+
+      const cliente = document.getElementById('cliente').value.trim() || '(sem nome)';
+      const cpf = document.getElementById('cpf').value.trim() || '(sem CPF)';
+      const beneficio = document.getElementById('beneficio').value.trim() || 'Aposentadoria';
+      const primeiraParcela = document.getElementById('primeiraParcela').value.trim();
+
+      let msg = `🧾 SIMULAÇÃO\n\n`;
+      msg += `Cliente: ${cliente}\n`;
+      msg += `CPF: ${cpf}\n`;
+      msg += `Tipo de Benefício: ${beneficio}\n`;
+      if (primeiraParcela) {
+        msg += `Primeira parcela para: ${primeiraParcela}\n`;
+      }
+      msg += `\n`;
+
+      const novoParcela = parseBr(document.getElementById('novoParcela').value);
+      const novoValor = parseBr(document.getElementById('novoValor').value);
+      const novoPrazo = document.getElementById('novoPrazo').value.trim();
+
+      if (novoParcela > 0 && novoValor > 0) {
+        msg += `Margem Nova — Parcela: ${money(novoParcela)} que libera ${money(novoValor)} em ${novoPrazo}\n`;
+      }
+
+      const rmcParcela = parseBr(document.getElementById('rmcParcela70').value);
+      const rmcValor = parseBr(document.getElementById('rmcValor70').value);
+      const rmcPrazo = document.getElementById('rmcPrazo').value.trim();
+
+      if (rmcParcela > 0 && rmcValor > 0) {
+        msg += `Cartão RMC — Parcela: ${money(rmcParcela)} que libera ${money(rmcValor)} em ${rmcPrazo}\n`;
+      }
+
+      const benefParcela = parseBr(document.getElementById('benefParcela70').value);
+      const benefValor = parseBr(document.getElementById('benefValor70').value);
+      const benefPrazo = document.getElementById('benefPrazo').value.trim();
+
+      if (benefParcela > 0 && benefValor > 0) {
+        msg += `Cartão Benefício — Parcela: ${money(benefParcela)} que libera ${money(benefValor)} em ${benefPrazo}\n`;
+      }
+
+      document.querySelectorAll('.linha-port').forEach(linha => {
+        const parcela = parseBr(linha.querySelector('.portParcela').value);
+        const prazo = linha.querySelector('.portPrazo').value.trim();
+        const libera = parseBr(linha.querySelector('.portLibera').value);
+
+        if (parcela > 0 && libera > 0) {
+          msg += `\nPortabilidade + Refinanciamento da parcela ${money(parcela)} que estende para ${prazo} libera ${money(libera)}\n`;
+        }
+      });
+
+      document.querySelectorAll('.linha-refin').forEach(linha => {
+        const parcela = parseBr(linha.querySelector('.refinParcela').value);
+        const prazo = linha.querySelector('.refinPrazo').value.trim();
+        const libera = parseBr(linha.querySelector('.refinLibera').value);
+
+        if (parcela > 0 && libera > 0) {
+          msg += `\nRefinanciamento da parcela ${money(parcela)} que estende para ${prazo} libera ${money(libera)}\n`;
+        }
+      });
+
+      msg += `\nTOTAL LIBERADO : ${document.getElementById('totalLiberado').textContent}\n`;
+      msg += `TOTAL DE PARCELA: ${document.getElementById('totalParcela').textContent}`;
+
+      document.getElementById('resultado').value = msg;
+    }
+
+    function copiarMensagem() {
+      const campo = document.getElementById('resultado');
+
+      if (!campo.value.trim()) {
+        gerarMensagem();
+      }
+
+      navigator.clipboard.writeText(campo.value)
+        .then(() => alert('Mensagem copiada com sucesso!'))
+        .catch(() => alert('Não foi possível copiar automaticamente.'));
+    }
+
+    function salvarSimulacao() {
+      gerarMensagem();
+      atualizarTotais();
+
+      const cliente = document.getElementById('cliente').value.trim();
+      const cpf = document.getElementById('cpf').value.trim();
+      const beneficio = document.getElementById('beneficio').value.trim();
+
+      const totalLiberado = document.getElementById('totalLiberado').textContent;
+      const totalParcela = document.getElementById('totalParcela').textContent;
+
+      if (!cliente || !cpf) {
+        alert('Preencha nome e CPF antes de salvar.');
+        return;
+      }
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify({
+          nome: cliente,
+          cpf: cpf,
+          beneficio: beneficio,
+          totalParcela: totalParcela,
+          totalLiberado: totalLiberado
+        })
+      });
+
+      alert('Simulação salva com sucesso!');
+    }
+
+    function limparTudo() {
+      document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+      document.getElementById('beneficio').selectedIndex = 0;
+      document.getElementById('portContainer').innerHTML = '';
+      document.getElementById('refinContainer').innerHTML = '';
+      document.getElementById('totalLiberado').textContent = 'R$ 0,00';
+      document.getElementById('totalParcela').textContent = 'R$ 0,00';
+      contadorPort = 0;
+      contadorRefin = 0;
+      adicionarPort();
+      adicionarRefin();
+    }
+
+    adicionarPort();
+    adicionarRefin();
+  </script>
+</body>
+</html>
