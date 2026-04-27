@@ -606,21 +606,37 @@
     }
 
     function salvarSimulacao() {
-      gerarMensagem();
-      atualizarTotais();
+  gerarMensagem();
+  atualizarTotais();
 
-      const cliente = document.getElementById('cliente').value.trim();
-      const cpf = document.getElementById('cpf').value.trim();
-      const telefone = document.getElementById('telefone').value.trim();
-      const beneficio = document.getElementById('beneficio').value.trim();
+  const cliente = document.getElementById('cliente').value.trim();
+  const cpf = document.getElementById('cpf').value.trim();
+  const telefone = document.getElementById('telefone').value.trim();
+  const beneficio = document.getElementById('beneficio').value.trim();
 
-      const totalLiberado = document.getElementById('totalLiberado').textContent;
-      const totalParcela = document.getElementById('totalParcela').textContent;
+  const totalLiberado = document.getElementById('totalLiberado').textContent;
+  const totalParcela = document.getElementById('totalParcela').textContent;
 
-      if (!cliente || !cpf) {
-        alert('Preencha nome e CPF antes de salvar.');
-        return;
-      }
+  if (!cliente || !cpf) {
+    alert('Preencha nome e CPF antes de salvar.');
+    return;
+  }
+
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: JSON.stringify({
+      nome: cliente,
+      cpf: cpf,
+      telefone: telefone,
+      beneficio: beneficio,
+      totalParcela: totalParcela,
+      totalLiberado: totalLiberado
+    })
+  });
+
+  alert('Simulação salva com sucesso!');
+}
 
       fetch(SCRIPT_URL, {
         method: 'POST',
