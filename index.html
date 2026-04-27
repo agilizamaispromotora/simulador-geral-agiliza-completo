@@ -201,6 +201,10 @@
           <input type="text" id="cpf" placeholder="000.000.000-00">
         </div>
         <div>
+          <label for="telefone">Telefone</label>
+          <input type="text" id="telefone" placeholder="Telefone / WhatsApp">
+        </div>
+        <div>
           <label for="beneficio">Tipo de benefício</label>
           <select id="beneficio">
             <option>Aposentadoria</option>
@@ -607,6 +611,7 @@
 
       const cliente = document.getElementById('cliente').value.trim();
       const cpf = document.getElementById('cpf').value.trim();
+      const telefone = document.getElementById('telefone').value.trim();
       const beneficio = document.getElementById('beneficio').value.trim();
 
       const totalLiberado = document.getElementById('totalLiberado').textContent;
@@ -623,6 +628,7 @@
         body: JSON.stringify({
           nome: cliente,
           cpf: cpf,
+          telefone: telefone,
           beneficio: beneficio,
           totalParcela: totalParcela,
           totalLiberado: totalLiberado
